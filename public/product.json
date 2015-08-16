@@ -1,0 +1,104 @@
+[
+    {
+        "id": 1,
+        "name": "Fearless Thong Mini Wedge Sandal",
+        "price": 100,
+        "specs": {
+            "manufacturer": "Seychelles",
+            "style": "sandal",
+            "color": "brown",
+            "heel": "low heel"
+        },
+        "description": "Low heel mini wedge sandal",
+        "rating": 3,
+        "image": {
+            "small": "/images/seychelles-thong-sandal.jpg",
+            "large": "/images/seychelles-thong-sandal-large.jpg"
+        }
+    },
+    {
+        "id": 2,
+        "name": "Em R Softy Bootie",
+        "price": 485,
+        "specs": {
+            "manufacturer": "n.d.c",
+            "style": "ankle boot",
+            "color": "sand",
+            "heel": "mid heel"
+        },
+        "description": "n.d.c shoes are carefully hand-crafted by artisans using the finest leathers. Because each item is handmade there may be slight imperfections and some pieces may have slight differences. This by no means affects the quality of the product.* Mid heel ankle boot* Oiled suede upper with inner side zip closure* Worn effect* Leather insole and sole* 2½ inch heel",
+        "rating": 5,
+        "image": {
+            "small": "/images/ndc-softy-bootie.jpg",
+            "large": "/images/ndc-softy-bootie-large.jpg"
+        }
+    },
+    {
+        "id": 3,
+        "name": "Full Speed Bootie",
+        "price": 160,
+        "specs": {
+            "manufacturer": "Seychelles",
+            "style": "ankle boot",
+            "color": "black",
+            "heel": " low heel"
+        },
+        "description": "Low heel ankle boot. Suede or metallic suede upper. Outer and inner side zip closures. Worn effect. Stacked heel. Padded insole and man made sole.",
+        "rating": 2,
+        "image": {
+            "small": "/images/seychelles-full-speed-bootie.jpg",
+            "large": "/images/seychelles-full-speed-bootie-large.jpg"
+        }
+    },
+    {
+        "id": 4,
+        "name": "Turn Up The Heat Bootie",
+        "price": 160,
+        "specs": {
+            "manufacturer": "Seychelles",
+            "style": "ankle boot",
+            "color": "sand",
+            "heel": "high heel"
+        },
+        "description": "High wedge pointed-toe bootie. Suede or leather upper. Inner side zip closure. Covered wedge. Leather insole and man-made sole.",
+        "rating": 4,
+        "image": {
+            "small": "/images/seychelles-turnup-heat-bootie.jpg",
+            "large": "/images/seychelles-turnup-heat-bootie-large.jpg"
+        }
+    },
+    {
+        "id": 5,
+        "name": "Could Be Boot",
+        "price": 170,
+        "specs": {
+            "manufacturer": "Seychelles",
+            "style": "ankle boot",
+            "color": "brown",
+            "heel": "high heel"
+        },
+        "description": "High heel boot. Leather. Lace-up vamp. Stitched counter. Pull tab at shaft. Inner side zip closure. Stacked heel. Leather insole and man-made sole.",
+        "rating": 3,
+        "image": {
+            "small": "/images/seychelles-could-be-boot.jpg",
+            "large": "/images/seychelles-could-be-boot-large.jpg"
+        }
+    },
+    {
+        "id": 6,
+        "name": "Shae Boot",
+        "price": 455,
+        "specs": {
+            "manufacturer": "Pour La Victoire",
+            "style": "boot",
+            "color": "brown",
+            "heel": "mid heel"
+        },
+        "description": "Mid heel boot. Leather upper. Wraparound crisscross strap with adjustable metal buckle close at vamp. Inner side zip closure. Stacked heel. Leather insole and sole.",
+        "rating": 5,
+        "image": {
+            "small": "/images/pour-la-victoire-shae-boot.jpg",
+            "large": "/images/pour-la-victoire-shae-boot-large.jpg"
+        }
+    }
+]

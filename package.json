@@ -1,0 +1,16 @@
+{
+    "name": "no-framework-spa",
+    "description": "Single page application using no JS Framework",
+    "version": "0.0.0",
+    "engines": {
+        "node": "0.12.x",
+        "npm": "2.11.x"
+    },
+    "dependencies": {
+        "body-parser": "^1.13.2",
+        "errorhandler": "^1.4.1",
+        "express": "^3.4.8",
+        "method-override": "^2.3.4",
+        "underscore": "^1.6.0"
+    }
+}

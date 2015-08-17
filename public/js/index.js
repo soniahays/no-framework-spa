@@ -1,72 +1,78 @@
 $(function() {
-    var products = [],
-        filters = {};
+	var products = [],
+		filters = {};
 
-    var checkboxes = $('.all-products input[type=checkbox]');
+	function Product() {
+		this.$checkboxes = $('.all-products input[type=checkbox]');
+		this.$singleProductPage = $('.single-product');
+		this.$window = $(window);
 
-	checkboxes.click(function() {
-        var that = $(this),
-            specName = that.attr('name');
+		this.$checkboxes.on('click',  this._checkboxesClick.bind(this));
+		this.$singleProductPage.on('click',  this._singleProductPageClick.bind(this));
+		this.$window.on('hashchange', this._windowHashChange.bind(this));
 
-        if(that.is(':checked')) {
-            // If the filter for this specification isn't created yet - do it.
-            if(!(filters[specName] && filters[specName].length)){
-                filters[specName] = [];
-            }
+		$.getJSON('product.json', function(data) {
+			this.generateAllProductsHTML(data);
+			this.$window.trigger('hashchange');
+		}.bind(this));
+	}
 
-            //	Push values into the chosen filter array
-            filters[specName].push(that.val());
+	Product.prototype._checkboxesClick = function(e) {
+		e.preventDefault();
+		var that = $(this),
+			specName = that.attr('name');
 
-            // Change the url hash;
-            createQueryHash(filters);
-        }
+		if(that.is(':checked')) {
+			if(!(filters[specName] && filters[specName].length)){
+				filters[specName] = [];
+			}
 
-        if(!that.is(":checked")) {
-            if(filters[specName] && filters[specName].length && (filters[specName].indexOf(that.val()) != -1)){
-                var index = filters[specName].indexOf(that.val());
+			//	Push values into the chosen filter array
+			filters[specName].push(that.val());
 
-                filters[specName].splice(index, 1);
+			// Change the url hash;
+			createQueryHash(filters);
+		}
 
-                if(!filters[specName].length){
-                    delete filters[specName];
-                }
+		if(that.is(':checked') === false) {
+			if(filters[specName] && filters[specName].length && (filters[specName].indexOf(that.val()) != -1)){
+				var index = filters[specName].indexOf(that.val());
 
-            }
-            // Change the url hash;
-            createQueryHash(filters);
-        }
+				filters[specName].splice(index, 1);
 
-        $('.filters button').click(function (e) {
-            e.preventDefault();
-            window.location.hash = '#';
-        });
-	});
+				if(!filters[specName].length){
+					delete filters[specName];
+				}
 
-    var singleProductPage = $('.single-product');
+			}
+			// Change the url hash;
+			this.createQueryHash(filters);
+		}
 
-    singleProductPage.on('click', function (e) {
+		$('.filters button').click(function (e) {
+			e.preventDefault();
+			window.location.hash = '#';
+		});
+	};
 
-        if (singleProductPage.hasClass('visible')) {
-            var clicked = $(e.target);
+	Product.prototype._singleProductPageClick = function(e) {
 
-            // If the close button or the background are clicked go to the previous page.
-            if (clicked.hasClass('close') || clicked.hasClass('overlay')) {
-                // Change the url hash with the last used filters.
-                createQueryHash(filters);
-            }
-        }
-    });
+		if (this.$singleProductPage.hasClass('visible')) {
+			var clicked = $(e.target);
 
-	$.getJSON('product.json', function(data) {
-	   generateAllProductsHTML(data);
-	   $(window).trigger('hashchange');
-	});
+			// If the close button or the background are clicked go to the previous page.
+			if (clicked.hasClass('close') || clicked.hasClass('overlay')) {
+				// Change the url hash with the last used filters.
+				this.createQueryHash(filters);
+			}
+		}
+	};
 
-	$(window).on('hashchange', function() {
-		render(window.location.hash);
-	});
+	Product.prototype._windowHashChange = function() {
+		this.render(window.location.hash);
+	};
 
-	function render(url) {
+	Product.prototype.render = function(url) {
 		var temp = url.split('/')[0];
 		$('.main-content .page').removeClass('visible');
 
@@ -74,15 +80,15 @@ $(function() {
 			// Homepage
 			'': function() {
 				filters = {};
-				checkboxes.prop('checked', false);
-				renderProductsPage(products);
-			},
+				this.$checkboxes.prop('checked', false);
+				this.renderProductsPage(products);
+			}.bind(this),
 			// Single Product page
 			'#product': function() {
 				var index = url.split('#product/')[1].trim();
-				renderSingleProductPage(index, products);
+				this.renderSingleProductPage(index, products);
 
-			},
+			}.bind(this),
 			// Page with filtered products
 			'#filter': function() {
 				url = url.split('#filter/')[1].trim();
@@ -94,7 +100,7 @@ $(function() {
 					window.location.hash = '#';
 				}
 
-				renderFilterResults(filters, products);
+				this.renderFilterResults(filters, products);
 			}
 		};
 
@@ -102,11 +108,11 @@ $(function() {
 			map[temp]();
 		}
 		else {
-			renderErrorPage();
+			this.renderErrorPage();
 		}
 	}
 
-	function generateAllProductsHTML(data) {
+	Product.prototype.generateAllProductsHTML = function(data) {
 		var list = $('.all-products .products-list');
 
 		var templateScript = $('#products-template').html();
@@ -120,93 +126,95 @@ $(function() {
 		})
 	}
 
-	function renderProductsPage(data) {
+	Product.prototype.renderProductsPage = function(data) {
 		var page = $('.all-products'),
 			allProducts = $('.all-products .products-list > li');
 
-		allProducts.addClass('hidden');
+//		allProducts.addClass('hidden');
 
 		allProducts.each(function() {
-            var that = $(this);
+			var that = $(this);
 
-            data.forEach(function(item) {
-                if(that.data('index') == item.id) {
-                    that.removeClass('hidden');
-                }
-            });
+			data.forEach(function(item) {
+				if(that.data('index') == item.id) {
+					that.removeClass('hidden');
+				}
+			});
 		});
 
-        page.addClass('visible');
+		page.addClass('visible');
 	}
 
-	function renderSingleProductPage(index, data) {
-        var page = $('.single-product'),
-            container = $('.preview-large');
+	Product.prototype.renderSingleProductPage = function(index, data) {
+		var page = $('.single-product'),
+			container = $('.preview-large');
 
-        if(data.length) {
-            data.forEach(function(item) {
-                if(item.id == index) {
-                    container.find('h3').text(item.name);
-                    container.find('img').attr('src', item.image.large);
-                    container.find('p').text(item.description);
-                }
-            });
-        }
+		if(data.length) {
+			data.forEach(function(item) {
+				if(item.id == index) {
+					container.find('h3').text(item.name);
+					container.find('img').attr('src', item.image.large);
+					container.find('p').text(item.description);
+				}
+			});
+		}
 
-        page.addClass('visible');
+		page.addClass('visible');
 	}
 
-    function renderFilterResults(filters, products) {
-        var criteria = ['manufacturer', 'style', 'color', 'heel'],
-            results = [],
-            isFiltered = false;
+	Product.prototype.renderFilterResults = function(filters, products) {
+		var criteria = ['manufacturer', 'style', 'color', 'heel'],
+			results = [],
+			isFiltered = false;
 
-        checkboxes.prop('checked', false);
+		this.$checkboxes.prop('checked', false);
 
-        criteria.forEach(function(criterion) {
-            if(filters[criterion] && filters[criterion].length) {
-                if(isFiltered) {
-                    products = results;
-                    results = [];
-                }
+		criteria.forEach(function(criterion) {
+			if(filters[criterion] && filters[criterion].length) {
+				if(isFiltered) {
+					products = results;
+					results = [];
+				}
 
-                filters[criterion].forEach(function(filter){
-                    products.forEach(function(item) {
-                        if(typeof item.specs[criterion] == 'number') {
-                            if(item.specs[criterion] == filter) {
-                                results.push(item);
-                                isFiltered = true;
-                            }
-                        }
+				filters[criterion].forEach(function(filter){
+					products.forEach(function(item) {
+						if(typeof item.specs[criterion] == 'number') {
+							if(item.specs[criterion] == filter) {
+								results.push(item);
+								isFiltered = true;
+							}
+						}
 
-                        if(typeof item.specs[criterion] == 'string') {
-                            if(item.specs[criterion].toLowerCase().indexOf(filter) != -1) {
-                                results.push(item);
-                                isFiltered = true;
-                            }
-                        }
-                    });
+						if(typeof item.specs[criterion] == 'string') {
+							if(item.specs[criterion].toLowerCase().indexOf(filter) != -1) {
+								results.push(item);
+								isFiltered = true;
+							}
+						}
+					});
 
-                    if(criterion && filter) {
-                        $('input[name=' + criterion + '][value=' + filter +']').prop('checked', true);
-                    }
-                });
-            }
-        });
-        renderProductsPage(results);
-    }
-
-	function renderErrorPage() {
-        var page = $('.error');
-        page.addClass('visible');
+					if(criterion && filter) {
+						$('input[name=' + criterion + '][value=' + filter +']').prop('checked', true);
+					}
+				});
+			}
+		});
+		this.renderProductsPage(results);
 	}
 
-	function createQueryHash(filters) {
-        if(!$.isEmptyObject(filters)) {
-            window.location.hash = '#filter/' + JSON.stringify(filters);
-        }
-        else {
-            window.location.hash = '#';
-        }
+	Product.prototype.renderErrorPage = function() {
+		var page = $('.error');
+		page.addClass('visible');
 	}
+
+	Product.prototype.createQueryHash = function(filters) {
+		if($.isEmptyObject(filters) === false) {
+			window.location.hash = '#filter/' + JSON.stringify(filters);
+		}
+		else {
+			window.location.hash = '#';
+		}
+	}
+
+	var product = new Product();
 });

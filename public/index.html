@@ -1,9 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-    <title>No Framework SPA</title>
+	<meta charset="UTF-8">
+	<title>No Framework SPA</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400" rel="stylesheet">
+	<link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
+    <header class="compact">
+        <h1><a href="#">No Framework Single Page App</a></h1>
+    </header>
+	<div class="main-content">
+		<div class="all-products page">
+			<div class="filters">
+				<form>
+                    <div class="filter-criteria">
+                        <span>Manufacturer</span>
+                        <label><input type="checkbox" name="manufacturer" value="seychelles">Seychelles</label>
+                        <label><input type="checkbox" name="manufacturer" value="ndc">n.d.c</label>
+                        <label><input type="checkbox" name="manufacturer" value="pour-la-victoire">Pour La Victoire</label>
+                    </div>
+
+                    <div class="filter-criteria">
+                        <span>Style</span>
+                        <label><input type="checkbox" value="sandal" name="style">Sandal</label>
+                        <label><input type="checkbox" value="ankle-boot" name="style">Ankle boot</label>
+                        <label><input type="checkbox" value="boot" name="style">Boot</label>
+                    </div>
+
+                    <div class="filter-criteria">
+                        <span>Color</span>
+                        <label><input type="checkbox" value="brown" name="color">Brown</label>
+                        <label><input type="checkbox" value="sand" name="color">Sand</label>
+                        <label><input type="checkbox" value="black" name="color">Black</label>
+                    </div>
+
+                    <div class="filter-criteria">
+                        <span>Heel</span>
+                        <label><input type="checkbox" value="low-heel" name="heel">Low heel</label>
+                        <label><input type="checkbox" value="mid-heel" name="heel">Mid heel</label>
+                        <label><input type="checkbox" value="high-heel" name="heel">High heel</label>
+                    </div>
+
+                    <button>Clear filters</button>
+				</form>
+            </div>
+            <ul class="products-list">
+                <script id="products-template" type="x-handlebars-template">
+                    {{#each this}}
+                    <li data-index="{{id}}">
+                        <a href="#" class="product-photo"><img src="{{image.small}}" height="130" alt="{{name}}"/></a>
+                        <h2><a href="#">{{name}}</a></h2>
+                        <ul class="product-description">
+                            <li><span>Manufacturer:</span>{{specs.manufacturer}}</li>
+                            <li><span>Style:</span>{{specs.style}}</li>
+                            <li><span>Color:</span>{{specs.color}}</li>
+                            <li><span>Heel:</span>{{specs.heel}}</li>
+                        </ul>
+                        <button>Add to Cart</button>
+                        <p class="product-price">{{price}}$</p>
+                        <div class="highlight"></div>
+                    </li>
+                    {{/each}}
+                </script>
+            </ul>
+        </div>
+
+        <div class="single-product page">
+            <div class="overlay"></div>
+            <div class="preview-large">
+                <h3>Single product view</h3>
+                <img src="" alt=""/>
+                <p></p>
+                <span class="close">&times;</span>
+            </div>
+        </div>
+
+        <div class="error page">
+            <h3>Sorry, something went wrong</h3>
+        </div>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/bower_components/handlebars/handlebars.min.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
 </body>
 </html>

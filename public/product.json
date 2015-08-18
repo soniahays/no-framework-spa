@@ -4,7 +4,7 @@
         "name": "Fearless Thong Mini Wedge Sandal",
         "price": 100,
         "specs": {
-            "manufacturer": "Seychelles",
+            "manufacturer": "seychelles",
             "style": "sandal",
             "color": "brown",
             "heel": "low heel"
@@ -21,7 +21,7 @@
         "name": "Em R Softy Bootie",
         "price": 485,
         "specs": {
-            "manufacturer": "n.d.c",
+            "manufacturer": "ndc",
             "style": "ankle boot",
             "color": "sand",
             "heel": "mid heel"
@@ -38,7 +38,7 @@
         "name": "Full Speed Bootie",
         "price": 160,
         "specs": {
-            "manufacturer": "Seychelles",
+            "manufacturer": "seychelles",
             "style": "ankle boot",
             "color": "black",
             "heel": " low heel"
@@ -55,7 +55,7 @@
         "name": "Turn Up The Heat Bootie",
         "price": 160,
         "specs": {
-            "manufacturer": "Seychelles",
+            "manufacturer": "seychelles",
             "style": "ankle boot",
             "color": "sand",
             "heel": "high heel"
@@ -72,7 +72,7 @@
         "name": "Could Be Boot",
         "price": 170,
         "specs": {
-            "manufacturer": "Seychelles",
+            "manufacturer": "seychelles",
             "style": "ankle boot",
             "color": "brown",
             "heel": "high heel"
@@ -89,7 +89,7 @@
         "name": "Shae Boot",
         "price": 455,
         "specs": {
-            "manufacturer": "Pour La Victoire",
+            "manufacturer": "pour-la-victoire",
             "style": "boot",
             "color": "brown",
             "heel": "mid heel"

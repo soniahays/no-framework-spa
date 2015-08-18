@@ -24,7 +24,7 @@ header {
     height: 40px;
     z-index: 100;
 
-    background-color: #282b2c;
+    background-color: #37474F; /*Blue Grey 800 material design*/
     padding: 20px 40px;
     color: #fff;
     box-shadow: 0px 3px 2px rgba(0, 0, 0, 0.1);
@@ -204,8 +204,6 @@ header h2.tzine a {
 .products-list .product-photo {
     display: block;
     text-align: center;
-    box-shadow : 0 0 20px 8px #f3f3f3 inset;
-
     width: 275px;
     margin-bottom: 25px;
     padding: 20px 0;
@@ -259,7 +257,7 @@ header h2.tzine a {
 /* Price and order button */
 .products-list button {
     border-radius: 2px;
-    background-color:  #87bae1;
+    background-color:  #607D8B; /*material design blue grey 500*/
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
     border: 0;
     color: #ffffff;
@@ -322,7 +320,7 @@ header h2.tzine a {
     position: fixed;
     top: 0;
     left: 0;
-    background-color: #282b2c;
+    background-color: #37474F; /*Blue Grey 800 material design*/
     transition: 0.6s;
     z-index: 100;
 }

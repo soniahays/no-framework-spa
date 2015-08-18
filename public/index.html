@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<title>No Framework SPA</title>
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
@@ -57,7 +58,10 @@
                             <li><span>Color:</span>{{specs.color}}</li>
                             <li><span>Heel:</span>{{specs.heel}}</li>
                         </ul>
-                        <button>Add to Cart</button>
+                        <button>
+                            <!--<i class="material-icons">shopping_cart</i>-->
+                            Buy
+                        </button>
                         <p class="product-price">{{price}}$</p>
                         <div class="highlight"></div>
                     </li>
@@ -70,7 +74,7 @@
             <div class="overlay"></div>
             <div class="preview-large">
                 <h3>Single product view</h3>
-                <img src="" alt=""/>
+                <img src=""/>
                 <p></p>
                 <span class="close">&times;</span>
             </div>

@@ -1,5 +1,5 @@
 'use strict';
-/* globals $:false */
+/* globals $:false, Handlebars */
 var products = [],
 	filters = {};
 
@@ -9,13 +9,14 @@ var products = [],
  */
 var Product = function() {
 	// jQuery selectors.
-	this.$checkboxes = $('.all-products input[type=checkbox]');
+	this.$checkboxesInput = $('.all-products input[type=checkbox]');
 	this.$window = $(window);
 	this.$homePageContent = $('.main-content .page');
-	this.$clearFilterButton = $('.filters button');
+	this.$clearFiltersButton = $('.filters button');
+	this.$productGrid = $('.all-products .product-grid');
 
-	//Handlbar templates.
-	this.$productCellTemplate = $('#products-template');
+	//Handlebar templates.
+	this.$productCellTemplate = $('#product-cell-template');
 
 	// Pages.
 	this.$errorPage = $('.error');
@@ -24,9 +25,13 @@ var Product = function() {
 
 	this.bindEvents();
 
+	// Get data our products data from products.json.
 	$.getJSON('product.json', function(data) {
 		products = data;
-		this.generateAllProductsHTML(data);
+
+		this.generateAllProductsHTML(products);
+
+		// Manually trigger a hashchange to start the app.
 		this.$window.trigger('hashchange');
 	}.bind(this));
 };
@@ -35,79 +40,118 @@ var Product = function() {
  * Bind events
  */
 Product.prototype.bindEvents = function() {
-	this.$checkboxes.on('click', this._checkboxesClick.bind(this));
-	this.$singleProductPage.on('click',  this._singleProductPageClick.bind(this));
-	this.$window.on('hashchange', this._windowHashChange.bind(this));
+	this.$checkboxesInput.on('click', this.updateFilters.bind(this));
+	this.$clearFiltersButton.on('click', this.clearAllFilters.bind(this));
+	this.$singleProductPage.on('click',  this.closeModal.bind(this));
+	this.$window.on('hashchange', this.handleWindowHashChange.bind(this));
 };
 
 /**
  *
- * @param e jQuery event.
- * @private
+ * @param e
  */
-Product.prototype._checkboxesClick = function(e) {
-	var checkbox = $(e.target),
-		specName = checkbox.attr('name');
+Product.prototype.addFilter = function(e) {
+	var $checkbox = $(e.target),
+		specName = $checkbox.attr('name');
 
-	if(checkbox.is(':checked')) {
-		if(!(filters[specName] && filters[specName].length)){
-			filters[specName] = [];
-		}
-
-		//	Push values into the chosen filter array
-		filters[specName].push(checkbox.val());
-
-		// Change the url hash;
-		this.createQueryHash(filters);
+	if(!(filters[specName] && filters[specName].length)) {
+		filters[specName] = [];
 	}
 
-	if(checkbox.is(':checked') === false) {
-		if(filters[specName] &&
-			filters[specName].length &&
-			(filters[specName].indexOf(checkbox.val()) != -1)) {
-			var index = filters[specName].indexOf(checkbox.val());
+	//Push values into the chosen filter array.
+	filters[specName].push($checkbox.val());
 
-			filters[specName].splice(index, 1);
-
-			if(filters[specName].length === 0){
-				delete filters[specName];
-			}
-		}
-
-		// Change the url hash;
-		this.createQueryHash(filters);
-	}
-
-	this.$clearFilterButton.click(function (e) {
-		e.preventDefault();
-		window.location.hash = '#';
-	});
+	//Update the url hash.
+	this.createQueryHash(filters);
 };
 
 /**
  *
  * @param e jQuery event
- * @private
  */
-Product.prototype._singleProductPageClick = function(e) {
+Product.prototype.removeFilter = function(e) {
+	var $checkbox = $(e.target),
+		specName = $checkbox.attr('name');
 
-	if (this.$singleProductPage.hasClass('visible')) {
-		var clicked = $(e.target);
+	if(filters[specName] &&
+		filters[specName].length &&
+		(filters[specName].indexOf($checkbox.val()) !== -1)) {
+		var index = filters[specName].indexOf($checkbox.val());
 
-		// If the close button or the background are clicked go to the previous page.
-		if (clicked.hasClass('close') || clicked.hasClass('overlay')) {
-			// Change the url hash with the last used filters.
-			this.createQueryHash(filters);
+		filters[specName].splice(index, 1);
+
+		//If it was the last remaining value for this specification,
+		//delete the whole array.
+		if(filters[specName].length === 0){
+			delete filters[specName];//TODO: use something else than delete.
 		}
+	}
+
+	//Update the url hash;
+	this.createQueryHash(filters);
+};
+
+/**
+ * Clear filters by updating url to go to the home page.
+ *
+ * @param e jQuery event
+ */
+Product.prototype.clearAllFilters = function(e) {
+	e.preventDefault();
+	window.location.hash = '#';
+};
+
+/**
+ * Checkboxes Input event handlers/filtering
+ * @param e jQuery event.
+ */
+Product.prototype.updateFilters = function(e) {
+	var $checkbox = $(e.target);
+
+	//Update filters object when a checkbox is checked.
+	if($checkbox.is(':checked')) {
+		this.addFilter(e);
+	}
+
+	//Remove the checkbox value from the filters when the checkbox is unchecked.
+	if($checkbox.is(':checked') === false) {
+		this.removeFilter(e);
 	}
 };
 
-Product.prototype._windowHashChange = function() {
+/**
+ * Handles event to dismiss modal window.
+ * @param e jQuery event.
+ */
+Product.prototype.closeModal = function(e) {
+	var $modal = null;
+
+	if($(e.target).hasClass('close')) {
+		var $closeButton = $(e.target);
+		$modal = $closeButton.parent().parent();
+	}
+
+	if($(e.target).hasClass('overlay')) {
+		var $overlay = $(e.target);
+		$modal = $overlay.parent();
+	}
+
+	if($modal !== null &&
+		$modal.hasClass('visible')) {
+		// Change the url hash with the last used filters.
+		this.createQueryHash(filters);
+	}
+};
+
+/**
+ *  Calls the render function on every hashchange event.
+ */
+Product.prototype.handleWindowHashChange = function() {
 	this.render(window.location.hash);
 };
 
 /**
- *
+ * Navigation.
  * @param url
  */
 Product.prototype.render = function(url) {
@@ -118,7 +162,7 @@ Product.prototype.render = function(url) {
 		// Homepage
 		'': function() {
 			filters = {};
-			this.$checkboxes.prop('checked', false);
+			this.$checkboxesInput.prop('checked', false);
 			this.renderProductsPage(products);
 		}.bind(this),
 		// Single Product page
@@ -154,7 +198,7 @@ Product.prototype.render = function(url) {
  * @param data
  */
 Product.prototype.generateAllProductsHTML = function(data) {
-	var list = $('.all-products .products-list');
+	var list = this.$productGrid;
 
 	var templateScript = this.$productCellTemplate.html();
 	var template = Handlebars.compile(templateScript);
@@ -164,7 +208,30 @@ Product.prototype.generateAllProductsHTML = function(data) {
 		e.preventDefault();
 		var productIndex = $(this).data('index');
 		window.location.hash = 'product/' + productIndex;
-	})
+	});
+};
+
+/**
+ *
+ * @param data
+ */
+Product.prototype.filterRenderedProducts = function(data) {
+	var $unfilteredProducts = $('.all-products .product-grid > li');
+
+	//Hide all the products in the products list.
+	$unfilteredProducts.addClass('hidden');
+
+	//Iterate over all the products, if their ID is in the data object, remove
+	//the hidden class to show the product.
+	$unfilteredProducts.each(function() {
+		var $product = $(this);
+
+		data.forEach(function (item) {
+			if($product.data('index') === item.id) {
+				$product.removeClass('hidden');
+			}
+		});
+	});
 };
 
 /**
@@ -172,20 +239,9 @@ Product.prototype.generateAllProductsHTML = function(data) {
  * @param data
  */
 Product.prototype.renderProductsPage = function(data) {
-	var page = this.$allProductsPage,
-		allProducts = $('.all-products .products-list > li');
+	var page = this.$allProductsPage;
 
-	allProducts.addClass('hidden');
-
-	allProducts.each(function() {
-		var that = $(this);
-
-		data.forEach(function(item) {
-			if(that.data('index') == item.id) {
-				that.removeClass('hidden');
-			}
-		});
-	});
+	this.filterRenderedProducts(data);
 
 	page.addClass('visible');
 };
@@ -197,14 +253,14 @@ Product.prototype.renderProductsPage = function(data) {
  */
 Product.prototype.renderSingleProductPage = function(index, data) {
 	var page = this.$singleProductPage,
-		container = $('.preview-large');
+		$container = $('.preview-large');
 
 	if(data.length) {
 		data.forEach(function(item) {
-			if(item.id == index) {
-				container.find('h3').text(item.name);
-				container.find('img').attr('src', item.image.large);
-				container.find('p').text(item.description);
+			if(item.id === parseInt(index, 10)) {
+				$container.find('h3').text(item.name);
+				$container.find('img').attr('src', item.image.large);
+				$container.find('p').text(item.description);
 			}
 		});
 	}
@@ -222,7 +278,7 @@ Product.prototype.renderFilterResults = function(filters, products) {
 		results = [],
 		isFiltered = false;
 
-	this.$checkboxes.prop('checked', false);
+	this.$checkboxesInput.prop('checked', false);
 
 	criteria.forEach(
 		function(criterion) {
@@ -234,15 +290,15 @@ Product.prototype.renderFilterResults = function(filters, products) {
 
 				filters[criterion].forEach(function(filter){
 					products.forEach(function(item) {
-						if(typeof item.specs[criterion] == 'number') {
-							if(item.specs[criterion] == filter) {
+						if(typeof item.specs[criterion] === 'number') {
+							if(item.specs[criterion] === filter) {
 								results.push(item);
 								isFiltered = true;
 							}
 						}
 
-						if(typeof item.specs[criterion] == 'string') {
-							if(item.specs[criterion].toLowerCase().indexOf(filter) != -1) {
+						if(typeof item.specs[criterion] === 'string') {
+							if(item.specs[criterion].toLowerCase().indexOf(filter) !== -1) {
 								results.push(item);
 								isFiltered = true;
 							}
@@ -250,7 +306,8 @@ Product.prototype.renderFilterResults = function(filters, products) {
 					});
 
 					if(criterion && filter) {
-						$('input[name=' + criterion + '][value=' + filter +']').prop('checked', true);
+						$('input[name=' + criterion + '][value=' + filter +']')
+							.prop('checked', true);
 					}
 				});
 			}

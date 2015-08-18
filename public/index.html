@@ -46,8 +46,8 @@
                     <button>Clear filters</button>
 				</form>
             </div>
-            <ul class="products-list">
-                <script id="products-template" type="x-handlebars-template">
+            <ul class="product-grid">
+                <script id="product-cell-template" type="x-handlebars-template">
                     {{#each this}}
                     <li data-index="{{id}}">
                         <a href="#" class="product-photo"><img src="{{image.small}}" height="130" alt="{{name}}"/></a>

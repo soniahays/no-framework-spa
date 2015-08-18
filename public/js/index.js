@@ -164,7 +164,7 @@ Product.prototype.generateAllProductsHTML = function(data) {
 		e.preventDefault();
 		var productIndex = $(this).data('index');
 		window.location.hash = 'product/' + productIndex;
-	}.bind(this))
+	})
 };
 
 /**

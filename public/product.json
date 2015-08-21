@@ -7,7 +7,7 @@
             "manufacturer": "seychelles",
             "style": "sandal",
             "color": "brown",
-            "heel": "low heel"
+            "heel": "low-heel"
         },
         "description": "Low heel mini wedge sandal",
         "rating": 3,
@@ -22,9 +22,9 @@
         "price": 485,
         "specs": {
             "manufacturer": "ndc",
-            "style": "ankle boot",
+            "style": "ankle-boot",
             "color": "sand",
-            "heel": "mid heel"
+            "heel": "mid-heel"
         },
         "description": "n.d.c shoes are carefully hand-crafted by artisans using the finest leathers. Because each item is handmade there may be slight imperfections and some pieces may have slight differences. This by no means affects the quality of the product.* Mid heel ankle boot* Oiled suede upper with inner side zip closure* Worn effect* Leather insole and sole* 2½ inch heel",
         "rating": 5,
@@ -39,9 +39,9 @@
         "price": 160,
         "specs": {
             "manufacturer": "seychelles",
-            "style": "ankle boot",
+            "style": "ankle-boot",
             "color": "black",
-            "heel": " low heel"
+            "heel": " low-heel"
         },
         "description": "Low heel ankle boot. Suede or metallic suede upper. Outer and inner side zip closures. Worn effect. Stacked heel. Padded insole and man made sole.",
         "rating": 2,
@@ -56,9 +56,9 @@
         "price": 160,
         "specs": {
             "manufacturer": "seychelles",
-            "style": "ankle boot",
+            "style": "ankle-boot",
             "color": "sand",
-            "heel": "high heel"
+            "heel": "high-heel"
         },
         "description": "High wedge pointed-toe bootie. Suede or leather upper. Inner side zip closure. Covered wedge. Leather insole and man-made sole.",
         "rating": 4,
@@ -73,9 +73,9 @@
         "price": 170,
         "specs": {
             "manufacturer": "seychelles",
-            "style": "ankle boot",
+            "style": "ankle-boot",
             "color": "brown",
-            "heel": "high heel"
+            "heel": "high-heel"
         },
         "description": "High heel boot. Leather. Lace-up vamp. Stitched counter. Pull tab at shaft. Inner side zip closure. Stacked heel. Leather insole and man-made sole.",
         "rating": 3,
@@ -92,7 +92,7 @@
             "manufacturer": "pour-la-victoire",
             "style": "boot",
             "color": "brown",
-            "heel": "mid heel"
+            "heel": "mid-heel"
         },
         "description": "Mid heel boot. Leather upper. Wraparound crisscross strap with adjustable metal buckle close at vamp. Inner side zip closure. Stacked heel. Leather insole and sole.",
         "rating": 5,

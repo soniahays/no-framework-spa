@@ -26,8 +26,8 @@
 
 		this.bindEvents();
 
-		// Get data our products data from products.json.
-		$.getJSON('product.json', function (data) {
+		// Get data, our products data from products.json.
+		$.getJSON('product.json', function(data) {
 			this.products = data;
 			this.$productGrid = $('.all-products .product-grid');
 
@@ -37,6 +37,11 @@
 			// Manually trigger a hashchange to start the app.
 			this.$window.trigger('hashchange');
 		}.bind(this));
+
+        // Get the criteria that will be used in the filters.
+        $.getJSON('/specs', function(data) {
+            this.criteria = data;
+        }.bind(this));
 	};
 
 	/**
@@ -282,7 +287,7 @@
 	 * @param products
 	 */
 	Product.prototype.renderFilterResults = function () {
-		var criteria = ['manufacturer', 'style', 'color', 'heel'];
+		var criteria = this.criteria;
 		var results = [];
 		var isFiltered = false;
 

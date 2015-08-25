@@ -38,10 +38,10 @@
 			this.$window.trigger('hashchange');
 		}.bind(this));
 
-        // Get the criteria that will be used in the filters.
-        $.getJSON('/specs', function(data) {
-            this.criteria = data;
-        }.bind(this));
+		// Get the criteria that will be used in the filters.
+		$.getJSON('/specs', function(data) {
+			this.criteria = data;
+		}.bind(this));
 	};
 
 	/**
@@ -287,6 +287,7 @@
 	 * @param products
 	 */
 	Product.prototype.renderFilterResults = function () {
+		var products = this.products;
 		var criteria = this.criteria;
 		var results = [];
 		var isFiltered = false;
@@ -297,12 +298,12 @@
 			function (criterion) {
 				if (this.filters[criterion] && this.filters[criterion].length) {
 					if (isFiltered) {
-						this.products = results;
+						products = results;
 						results = [];
 					}
 
 					this.filters[criterion].forEach(function (filter) {
-							this.products.forEach(function (item) {
+							products.forEach(function (item) {
 								if (typeof item.specs[criterion] === 'number') {
 									if (item.specs[criterion] === filter) {
 										results.push(item);

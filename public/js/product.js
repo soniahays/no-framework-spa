@@ -26,12 +26,12 @@
 
 		this.bindEvents();
 
-		// Get data, our products data from products.json.
-		$.getJSON('product.json', function(data) {
-			this.products = data;
-			this.$productGrid = $('.all-products .product-grid');
+		// Get products, our products data from products.json.
+		$.getJSON('product.json', function(products) {
+			this.products = products;
+			this.$productGrid = this.generateProductGridHTML(this.products);
+			this.$productGrid.find('li').on('click', this.openProductModal);
 
-			this.generateAllProductsHTML(this.products);
 			this.$allProductCells = $('.all-products .product-grid > li');
 
 			// Manually trigger a hashchange to start the app.
@@ -181,8 +181,8 @@
 			}.bind(this),
 			// Single Product page
 			'#product': function () {
-				var index = url.split('#product/')[1].trim();
-				this.renderSingleProductPage(index, this.products);
+				var productID = url.split('#product/')[1].trim();
+				this.renderProductDetailPage(productID, this.products);
 			}.bind(this),
 			// Page with filtered products
 			'#filter': function () {
@@ -195,11 +195,13 @@
 					window.location.hash = '#';
 				}
 
-				this.renderFilterResults();
+				var filteredProducts = this.getFilterResults(this.criteria, this.products);
+				this.renderProductsPage(filteredProducts);
+
 			}.bind(this)
 		};
 
-		if (map[temp]) {
+		if (map[temp] !== null && typeof map[temp] !== 'undefined') {
 			map[temp]();
 		} else {
 			this.renderErrorPage();
@@ -207,39 +209,45 @@
 	};
 
 	/**
-	 *
-	 * @param data
+	 * Generates Product Grid Html using handlebars.
+	 * @param products list of products
+	 * @returns {*|jQuery|HTMLElement}
 	 */
-	Product.prototype.generateAllProductsHTML = function (data) {
-		var list = this.$productGrid;
+	Product.prototype.generateProductGridHTML = function (products) {
+		var productGrid = $('.all-products .product-grid');
 
 		var templateScript = this.$productCellTemplate.html();
 		var template = Handlebars.compile(templateScript);
-		list.append(template(data));
+		productGrid.append(template(products));
 
-		list.find('li').on('click', function (e) {
-			e.preventDefault();
-			var productIndex = $(this).data('index');
-			window.location.hash = 'product/' + productIndex;
-		});
+		return productGrid;
 	};
 
 	/**
-	 *
-	 * @param data
+	 * Opens product detail modal
 	 */
-	Product.prototype.filterRenderedProducts = function (data) {
+	Product.prototype.openProductModal = function() {
+		var productId = $(this).data('index');
+		window.location.hash = 'product/' + productId;
+	};
+
+	/**
+	 * Hides and Un-hides products depending on whether they are among the
+	 * product that have been selected in the filter.
+	 * @param filteredProducts
+	 */
+	Product.prototype.filterRenderedProducts = function (filteredProducts) {
 		var $unfilteredProducts = this.$allProductCells;
 
 		//Hide all the products in the products list.
 		$unfilteredProducts.addClass('hidden');
 
-		//Iterate over all the products, if their ID is in the data object, remove
-		//the hidden class to show the product.
+		//Iterate over all the products, if their ID is in the filteredProducts
+		// object, remove the hidden class to show the product.
 		$unfilteredProducts.each(function () {
 			var $product = $(this);
 
-			data.forEach(function (item) {
+			filteredProducts.forEach(function (item) {
 				if ($product.data('index') === item.id) {
 					$product.removeClass('hidden');
 				}
@@ -248,29 +256,29 @@
 	};
 
 	/**
-	 *
-	 * @param data
+	 * Renders the main Products page.
+	 * @param filteredProducts
 	 */
-	Product.prototype.renderProductsPage = function (data) {
+	Product.prototype.renderProductsPage = function (filteredProducts) {
 		var page = this.$allProductsPage;
 
-		this.filterRenderedProducts(data);
+		this.filterRenderedProducts(filteredProducts);
 
 		page.addClass('visible');
 	};
 
 	/**
-	 *
-	 * @param index
-	 * @param data
+	 * Renders the product details page.
+	 * @param productID id of the selected product
+	 * @param products list of products
 	 */
-	Product.prototype.renderSingleProductPage = function (index, data) {
+	Product.prototype.renderProductDetailPage = function (productID, products) {
 		var page = this.$singleProductPage;
 		var $container = $('.preview-large');
 
-		if (data.length) {
-			data.forEach(function (item) {
-				if (item.id === parseInt(index, 10)) {
+		if (products.length !== 0) {
+			products.forEach(function (item) {
+				if (item.id === parseInt(productID, 10)) {
 					$container.find('h3').text(item.name);
 					$container.find('img').attr('src', item.image.large);
 					$container.find('p').text(item.description);
@@ -282,38 +290,30 @@
 	};
 
 	/**
-	 *
-	 * @param filters
+	 * Get the list of filtered products
+	 * @param criteria array of available product specs.
 	 * @param products
+	 * @returns {Array} returns an Array of filtered products.
 	 */
-	Product.prototype.renderFilterResults = function () {
-		var products = this.products;
-		var criteria = this.criteria;
-		var results = [];
+	Product.prototype.getFilterResults = function (criteria, products) {
+		var filteredProducts = [];
 		var isFiltered = false;
 
 		this.$checkboxesInput.prop('checked', false);
 
 		criteria.forEach(
 			function (criterion) {
-				if (this.filters[criterion] && this.filters[criterion].length) {
+				if (this.filters[criterion] && this.filters[criterion].length !== 0) {
 					if (isFiltered) {
-						products = results;
-						results = [];
+						products = filteredProducts;
+						filteredProducts = [];
 					}
 
 					this.filters[criterion].forEach(function (filter) {
 							products.forEach(function (item) {
-								if (typeof item.specs[criterion] === 'number') {
-									if (item.specs[criterion] === filter) {
-										results.push(item);
-										isFiltered = true;
-									}
-								}
-
 								if (typeof item.specs[criterion] === 'string') {
 									if (item.specs[criterion].toLowerCase().indexOf(filter) !== -1) {
-										results.push(item);
+										filteredProducts.push(item);
 										isFiltered = true;
 									}
 								}
@@ -329,11 +329,11 @@
 			}.bind(this)
 		);
 
-		this.renderProductsPage(results);
+		return filteredProducts;
 	};
 
 	/**
-	 *
+	 * Renders error page.
 	 */
 	Product.prototype.renderErrorPage = function () {
 		var page = this.$errorPage;
@@ -341,7 +341,7 @@
 	};
 
 	/**
-	 *
+	 * Creates query hash either with or without filters.
 	 * @param filters
 	 */
 	Product.prototype.createQueryHash = function (filters) {

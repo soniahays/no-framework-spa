@@ -1,4 +1,4 @@
-(function() {
+(function () {
 	'use strict';
 	/* globals $:false, Handlebars */
 
@@ -27,19 +27,19 @@
 		this.bindEvents();
 
 		// Get products, our products data from products.json.
-		$.getJSON('product.json', function(products) {
+		$.getJSON('product.json', function (products) {
 			this.products = products;
 			this.$productGrid = this.generateProductGridHTML(this.products);
 			this.$productGrid.find('li').on('click', this.openProductModal);
 
 			this.$allProductCells = $('.all-products .product-grid > li');
 
-			// Manually trigger a hashchange to start the app.
-			this.$window.trigger('hashchange');
+			// Manually trigger a url change to start the app.
+			this.$window.trigger('urlchange');
 		}.bind(this));
 
 		// Get the criteria that will be used in the filters.
-		$.getJSON('/specs', function(data) {
+		$.getJSON('/specs', function (data) {
 			this.criteria = data;
 		}.bind(this));
 	};
@@ -51,7 +51,7 @@
 		this.$checkboxesInput.on('click', this.updateFilters.bind(this));
 		this.$clearFiltersButton.on('click', this.clearAllFilters.bind(this));
 		this.$singleProductPage.on('click', this.closeModal.bind(this));
-		this.$window.on('hashchange', this.handleWindowHashChange.bind(this));
+		this.$window.on('urlchange', this.handleWindowURLChange.bind(this));
 	};
 
 	/**
@@ -73,7 +73,7 @@
 		this.filters[filterName].push($checkedBox.val());
 
 		//Update the url hash.
-		this.createQueryHash(this.filters);
+		this.createQueryString(this.filters);
 	};
 
 	/**
@@ -100,8 +100,8 @@
 			}
 		}
 
-		//Update the url hash;
-		this.createQueryHash(this.filters);
+		//Update the url querystring
+		this.createQueryString(this.filters);
 	};
 
 	/**
@@ -111,7 +111,7 @@
 	 */
 	Product.prototype.clearAllFilters = function (e) {
 		e.preventDefault();
-		window.location.hash = '#';
+		this.setURL('/');
 	};
 
 	/**
@@ -152,59 +152,46 @@
 
 		if ($modal !== null &&
 			$modal.hasClass('visible')) {
-			// Rebuild the URL hash with the last used filters.
-			this.createQueryHash(this.filters);
+			// Rebuild the URL querystring with the last used filters.
+			this.createQueryString(this.filters);
 		}
 	};
 
 	/**
-	 *  Calls the render page function on every hashchange event.
+	 *  Calls the render page function on every url change event.
 	 */
-	Product.prototype.handleWindowHashChange = function () {
-		this.render(window.location.hash);
+	Product.prototype.handleWindowURLChange = function () {
+		this.render(window.location.search);
 	};
 
 	/**
 	 * Navigation.
-	 * @param url
+	 * @param queryString
 	 */
-	Product.prototype.render = function (url) {
-		var temp = url.split('/')[0];
+	Product.prototype.render = function (queryString) {
+		var filterValue = getParameterByName(queryString, 'filter');
+		var productValue = getParameterByName(queryString, 'product');
+
 		this.$homePageContent.removeClass('visible');
 
-		var map = {
-			// Homepage
-			'': function () {
-				this.filters = {};
-				this.$checkboxesInput.prop('checked', false);
-				this.renderProductsPage(this.products);
-			}.bind(this),
-			// Single Product page
-			'#product': function () {
-				var productID = url.split('#product/')[1].trim();
-				this.renderProductDetailPage(productID, this.products);
-			}.bind(this),
-			// Page with filtered products
-			'#filter': function () {
-				url = url.split('#filter/')[1].trim();
+		if (filterValue) {
+			try {
+				this.filters = JSON.parse(filterValue);
+			}
+			catch (err) {
+				this.setURL('/');
+			}
 
-				try {
-					this.filters = JSON.parse(url);
-				}
-				catch (err) {
-					window.location.hash = '#';
-				}
-
-				var filteredProducts = this.getFilterResults(this.criteria, this.products);
-				this.renderProductsPage(filteredProducts);
-
-			}.bind(this)
-		};
-
-		if (map[temp] !== null && typeof map[temp] !== 'undefined') {
-			map[temp]();
-		} else {
-			this.renderErrorPage();
+			var filteredProducts = this.getFilterResults(this.criteria, this.products);
+			this.renderProductsPage(filteredProducts);
+		}
+		else if (productValue) {
+			this.renderProductDetailPage(productValue, this.products);
+		}
+		else {
+			this.filters = {};
+			this.$checkboxesInput.prop('checked', false);
+			this.renderProductsPage(this.products);
 		}
 	};
 
@@ -224,11 +211,12 @@
 	};
 
 	/**
+	 * //TODO:
 	 * Opens product detail modal
 	 */
-	Product.prototype.openProductModal = function() {
-		var productId = $(this).data('index');
-		window.location.hash = 'product/' + productId;
+	Product.prototype.openProductModal = function () {
+//		var productId = $(this).data('index');
+//		this.setURL(url);
 	};
 
 	/**
@@ -333,6 +321,7 @@
 	};
 
 	/**
+	 * //TODO:
 	 * Renders error page.
 	 */
 	Product.prototype.renderErrorPage = function () {
@@ -344,14 +333,36 @@
 	 * Creates query hash either with or without filters.
 	 * @param filters
 	 */
-	Product.prototype.createQueryHash = function (filters) {
+	Product.prototype.createQueryString = function (filters) {
+		var url = '?filter=' + JSON.stringify(filters);
 		if ($.isEmptyObject(filters) === false) {
-			window.location.hash = '#filter/' + JSON.stringify(filters);
+			this.setURL(url);
 		}
 		else {
-			window.location.hash = '#';
+			this.setURL('/');
 		}
 	};
 
+	/**
+	 *
+	 * @param url
+	 */
+	Product.prototype.setURL = function (url) {
+		window.history.pushState(null, null, url);
+		this.$window.trigger('urlchange');
+	};
+
 	var product = new Product();
+
+
+	/**
+	 * Get query string by name
+	 * TODO: Move to utils.js.
+	 */
+	function getParameterByName(queryString, name) {
+		name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+		var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+			results = regex.exec(queryString);
+		return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	}
 }());

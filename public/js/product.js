@@ -30,7 +30,7 @@
 		$.getJSON('product.json', function (products) {
 			this.products = products;
 			this.$productGrid = this.generateProductGridHTML(this.products);
-			this.$productGrid.find('li').on('click', this.openProductModal);
+			this.$productGrid.find('li').on('click', this.openProductModal.bind(this));
 
 			this.$allProductCells = $('.all-products .product-grid > li');
 
@@ -211,12 +211,12 @@
 	};
 
 	/**
-	 * //TODO:
 	 * Opens product detail modal
+	 * @param e jQuery event.
 	 */
-	Product.prototype.openProductModal = function () {
-//		var productId = $(this).data('index');
-//		this.setURL(url);
+	Product.prototype.openProductModal = function (e) {
+		var productId = $(e.target).parent().data('index');
+		this.setURL('?product=' + productId);
 	};
 
 	/**
@@ -318,15 +318,6 @@
 		);
 
 		return filteredProducts;
-	};
-
-	/**
-	 * //TODO:
-	 * Renders error page.
-	 */
-	Product.prototype.renderErrorPage = function () {
-		var page = this.$errorPage;
-		page.addClass('visible');
 	};
 
 	/**

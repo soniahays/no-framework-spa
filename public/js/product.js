@@ -325,9 +325,9 @@
 	 * @param filters
 	 */
 	Product.prototype.createQueryString = function (filters) {
-		var url = '?filter=' + JSON.stringify(filters);
+		var queryString = '?filter=' + JSON.stringify(filters);
 		if ($.isEmptyObject(filters) === false) {
-			this.setURL(url);
+			this.setURL(queryString);
 		}
 		else {
 			this.setURL('/');
@@ -335,11 +335,11 @@
 	};
 
 	/**
-	 *
-	 * @param url
+	 * Update the browser URL and render.
+	 * @param queryString
 	 */
-	Product.prototype.setURL = function (url) {
-		window.history.pushState(null, null, url);
+	Product.prototype.setURL = function (queryString) {
+		window.history.pushState(null, null, queryString);
 		this.$window.trigger('urlchange');
 	};
 

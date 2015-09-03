@@ -1,0 +1,45 @@
+#themeswitcher {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	z-index:100;
+	border-left: 1px solid #ccc;
+	background: #fff;
+}
+#themeswitcher ol {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	font-family: 'Open Sans';
+}
+
+#themeswitcher:hover li {
+	height: auto;
+	visibility: visible;
+}
+#themeswitcher li {
+	height: 0;
+	visibility: hidden;
+}
+#themeswitcher li.current {
+	height: auto;
+	visibility: visible;
+	font-weight: bold;
+}
+
+#themeswitcher li a {
+	color: #999;
+	text-decoration: none;
+	padding: 8px 10px;
+	display: block;
+	border-top: 1px solid #ccc;
+	font-size: .8375rem;
+}
+#themeswitcher li a:hover {
+	background-color: #eee;
+}
+#themeswitcher li.current a { color: #555; }
+
+@media print {
+	#themeswitcher { display: none; }
+}

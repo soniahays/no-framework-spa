@@ -1,15 +1,24 @@
 header {
-     background-color: #E91E63;
+	 background-color: #E91E63;
  }
 
+body {
+	background-color: #eee;
+}
+
 .overlay {
-    background-color: #E91E63;
+	background-color: #eee;
+}
+
+.preview-large h3 {
+	color: #E91E63;
 }
 
 .product-grid button {
-    background-color: #C2185B;
+	background-color: #C2185B;
 }
 
 .filters button {
-    background-color: #9E9E9E;
+	background-color: #9E9E9E;
 }
+

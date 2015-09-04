@@ -138,7 +138,7 @@ header h2.tzine a {
 
 .filters button {
 	border-radius: 2px;
-	background-color:  #4BC34B;
+	background-color:  #607D8B;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
 	border: 0;
 	color: #ffffff;
@@ -315,7 +315,7 @@ header h2.tzine a {
 }
 
 .overlay {
-	height: 20px;
+	/*height: 20px;*/
 	width: 100%;
 	position: fixed;
 	top: 0;
